@@ -9,9 +9,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from datetime import timezone
+from datetime import datetime, timezone
 from telethon import TelegramClient
-
+now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
 load_dotenv()
 
 # === Настройки и инициализация ===
@@ -69,13 +69,13 @@ async def publish_story_delayed(user_id: int, delay: int):
 async def send_notification(user_id: int):
     data = user_schedules.get(user_id)
     print(f"[NOTIFY] функция send_notification вызвана. Время: {datetime.now()}")
-    print(f"[NOTIFY] Напоминание для user_id={user_id}")
+    print(f"[NOTIFY] Напоминание для user_id={user_id} в {datetime.now(timezone.utc)}")
     if not data:
         return
 
     await bot.send_message(
         user_id,
-        "\u2757\ufe0f Через 15 минут будет опубликована история. Отменить публикацию?",
+        f"! Сейчас {now}. Через 2 минуты будет опубликована история. Отменить публикацию?",
         reply_markup=cancel_keyboard()
     )
     asyncio.create_task(publish_story_delayed(user_id, delay=2 * 60))
@@ -184,7 +184,7 @@ async def cancel_handler(callback: types.CallbackQuery):
 
 # === Точка входа ===
 async def main():
-    print("[MAIN] Старт бота")
+    print("[MAIN] Старт бота. Сейчас: {now}.")
     print("[DEBUG] Запланированные задачи:")
     print(scheduler.get_jobs())
     await dp.start_polling(bot)
