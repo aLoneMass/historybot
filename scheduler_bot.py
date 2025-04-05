@@ -24,6 +24,7 @@ storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 scheduler = AsyncIOScheduler()
 scheduler.start()
+print("[SCHEDULER] Планировщик запущен")
 client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 user_schedules = {}
@@ -68,7 +69,7 @@ async def publish_story_delayed(user_id: int, delay: int):
 # === Функция отправки напоминания ===
 async def send_notification(user_id: int):
     data = user_schedules.get(user_id)
-    print(f"[DEBUG] func send_notification Напоминание для user_id: {user_id}")
+    print(f"[NOTIFY] функция send_notification вызвана. Время: {datetime.now()}")
     print(f"[NOTIFY] Напоминание для user_id={user_id}")
     if not data:
         return
@@ -143,7 +144,7 @@ async def handle_time(message: types.Message, state: FSMContext):
         "cancel_next": False
     }
 
-    start_datetime = datetime.combine(datetime.now().date(), pub_time) + timedelta(minutes=-15)
+    start_datetime = datetime.combine(datetime.now().date(), pub_time) + timedelta(minutes=-2)
     now = datetime.now()
     if start_datetime < now:
         start_datetime += timedelta(days=1)
@@ -177,7 +178,9 @@ async def cancel_handler(callback: types.CallbackQuery):
 
 # === Точка входа ===
 async def main():
-    
+    print("[MAIN] Старт бота")
+    print("[DEBUG] Запланированные задачи:")
+    print(scheduler.get_jobs())
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
