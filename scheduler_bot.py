@@ -11,8 +11,24 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 load_dotenv()
 
-
 import os
+
+API_TOKEN = os.getenv("BOT_TOKEN")
+API_ID = int(os.getenv("TG_API_ID"))       # Telegram API ID
+API_HASH = os.getenv("TG_API_HASH")        # Telegram API Hash
+SESSION_NAME = "user_session"              # Для Telethon
+
+bot = Bot(token=API_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
+
+scheduler = AsyncIOScheduler()
+
+# Хранилище заданий и расписаний
+user_schedules = {}
+
+# Userbot клиент
+client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 class UploadStates(StatesGroup):
     waiting_for_media = State()
@@ -94,22 +110,6 @@ async def handle_time(message: types.Message, state: FSMContext):
     await state.clear()
 
 
-API_TOKEN = os.getenv("BOT_TOKEN")
-API_ID = int(os.getenv("TG_API_ID"))       # Telegram API ID
-API_HASH = os.getenv("TG_API_HASH")        # Telegram API Hash
-SESSION_NAME = "user_session"              # Для Telethon
-
-bot = Bot(token=API_TOKEN)
-storage = MemoryStorage()
-dp = Dispatcher(storage=storage)
-
-scheduler = AsyncIOScheduler()
-
-# Хранилище заданий и расписаний
-user_schedules = {}
-
-# Userbot клиент
-client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 @dp.message(Command("start"))
 async def start_handler(message: types.Message):
