@@ -9,6 +9,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from datetime import timezone
 from telethon import TelegramClient
 
 load_dotenv()
@@ -22,7 +23,7 @@ SESSION_NAME = "user_session"
 bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
-scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(timezone=timezone.utc)
 client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 user_schedules = {}
@@ -144,6 +145,7 @@ async def handle_time(message: types.Message, state: FSMContext):
 
     now = datetime.now()
     start_datetime = datetime.combine(now.date(), pub_time) - timedelta(minutes=2)
+    start_datetime = start_datetime.replace(tzinfo=timezone.utc)
     
     if start_datetime < now:
         start_datetime += timedelta(days=1)
