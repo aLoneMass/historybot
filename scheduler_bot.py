@@ -200,13 +200,17 @@ async def cancel_handler(callback: types.CallbackQuery):
         await callback.message.answer("⏹ Все задачи отменены.")
 
 # === Точка входа ===
-async def main():
-    print(f"[MAIN] Старт бота. Сейчас: {now}.")
-    print("[DEBUG] Запланированные задачи:")
-    print(scheduler.get_jobs())
-    await dp.start_polling(bot)
+async def on_startup(dispatcher: Dispatcher, bot: Bot):
+    print("[INIT] Запускаю планировщик...")
     scheduler.start()
-    print("[SCHEDULER] Планировщик запущен")
+
+async def main():
+    dp.startup.register(on_startup)
+    await dp.start_polling(bot)
+    # print(f"[MAIN] Старт бота. Сейчас: {now}.")
+    # print("[DEBUG] Запланированные задачи:")
+    # print(scheduler.get_jobs())
+    # print("[SCHEDULER] Планировщик запущен")
 
 if __name__ == "__main__":
     asyncio.run(main())
