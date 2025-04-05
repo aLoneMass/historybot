@@ -68,6 +68,7 @@ async def publish_story_delayed(user_id: int, delay: int):
 async def send_notification(user_id: int):
     data = user_schedules.get(user_id)
     print(f"[DEBUG] func send_notification Напоминание для user_id: {user_id}")
+    print(f"[NOTIFY] Напоминание для user_id={user_id}")
     if not data:
         return
 
@@ -142,6 +143,10 @@ async def handle_time(message: types.Message, state: FSMContext):
     }
 
     start_datetime = datetime.combine(datetime.now().date(), pub_time) + timedelta(minutes=-15)
+    now = datetime.now()
+    if start_datetime < now:
+        start_datetime += timedelta(days=1)
+    print(f"[SCHEDULE] Публикация для user_id={user_id} в {pub_time}, запуск уведомления в {start_datetime}")
     scheduler.add_job(
         send_notification,
         trigger='interval',
