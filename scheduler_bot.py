@@ -23,8 +23,6 @@ bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 scheduler = AsyncIOScheduler()
-scheduler.start()
-print("[SCHEDULER] Планировщик запущен")
 client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 user_schedules = {}
@@ -182,6 +180,8 @@ async def main():
     print("[DEBUG] Запланированные задачи:")
     print(scheduler.get_jobs())
     await dp.start_polling(bot)
+    scheduler.start()
+    print("[SCHEDULER] Планировщик запущен")
 
 if __name__ == "__main__":
     asyncio.run(main())
