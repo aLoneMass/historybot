@@ -73,6 +73,21 @@ async def handle_days(message: types.Message, state: FSMContext):
     await message.answer("Во сколько публиковать? (формат HH:MM, например 14:30)")
     await state.set_state(UploadStates.waiting_for_time)
 
+async def send_notification(user_id: int):
+    data = user_schedules.get(user_id)
+    if not data:
+        return
+
+    await bot.send_message(
+        user_id,
+        "Через 15 минут будет опубликована история. Отменить публикацию?",
+        reply_markup=cancel_keyboard()
+    )
+
+    # Планируем публикацию через 15 минут
+    asyncio.create_task(publish_story_delayed(user_id, delay=15*60))
+
+
 @dp.message(UploadStates.waiting_for_time)
 async def handle_time(message: types.Message, state: FSMContext):
     try:
@@ -93,7 +108,7 @@ async def handle_time(message: types.Message, state: FSMContext):
         "time": pub_time,
         "cancel_next": False
     }
-
+    
     # Запускаем задачу в расписании
     start_datetime = datetime.combine(datetime.now().date(), pub_time) + timedelta(minutes=-15)
     scheduler.add_job(
@@ -191,20 +206,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-async def send_notification(user_id: int):
-    data = user_schedules.get(user_id)
-    if not data:
-        return
-
-    await bot.send_message(
-        user_id,
-        "Через 15 минут будет опубликована история. Отменить публикацию?",
-        reply_markup=cancel_keyboard()
-    )
-
-    # Планируем публикацию через 15 минут
-    asyncio.create_task(publish_story_delayed(user_id, delay=15*60))
 
 async def publish_story_delayed(user_id: int, delay: int):
     await asyncio.sleep(delay)
