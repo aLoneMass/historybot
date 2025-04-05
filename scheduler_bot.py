@@ -128,7 +128,7 @@ async def handle_days(message: types.Message, state: FSMContext):
     await message.answer("Во сколько публиковать? (HH:MM)")
     await state.set_state(UploadStates.waiting_for_time)
 
-@dp.message(UploadStates.waiting_for_time)
+@dp.message(UploadStates.waiting_for_time, F.text)
 async def handle_time(message: types.Message, state: FSMContext):
     if not message.text or ":" not in message.text:
         await message.answer("Неверный формат. Пиши HH:MM, например 14:30")
