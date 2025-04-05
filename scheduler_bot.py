@@ -142,10 +142,13 @@ async def handle_time(message: types.Message, state: FSMContext):
         "cancel_next": False
     }
 
-    start_datetime = datetime.combine(datetime.now().date(), pub_time) + timedelta(minutes=-2)
     now = datetime.now()
+    start_datetime = datetime.combine(now.date(), pub_time) - timedelta(minutes=2)
+    
     if start_datetime < now:
         start_datetime += timedelta(days=1)
+        print(f"[SCHEDULE] Задача будет запущена в {start_datetime}")
+    print(f"[SCHEDULE] Задача будет запущена в {start_datetime}")
     print(f"[SCHEDULE] Публикация для user_id={user_id} в {pub_time}, запуск уведомления в {start_datetime}")
     scheduler.add_job(
         send_notification,
@@ -156,6 +159,9 @@ async def handle_time(message: types.Message, state: FSMContext):
         id=str(user_id),
         replace_existing=True
     )
+    print("[DEBUG] Текущие задачи:")
+    for job in scheduler.get_jobs():
+        print(job)
 
     await message.answer("📅 Публикация запланирована! Буду напоминать за 2 минуты до каждой.")
     await state.clear()
