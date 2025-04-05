@@ -79,7 +79,7 @@ async def send_notification(user_id: int):
         "\u2757\ufe0f Через 15 минут будет опубликована история. Отменить публикацию?",
         reply_markup=cancel_keyboard()
     )
-    asyncio.create_task(publish_story_delayed(user_id, delay=15 * 60))
+    asyncio.create_task(publish_story_delayed(user_id, delay=2 * 60))
 
 # === Кнопки отмены ===
 def cancel_keyboard():
@@ -159,7 +159,7 @@ async def handle_time(message: types.Message, state: FSMContext):
         replace_existing=True
     )
 
-    await message.answer("📅 Публикация запланирована! Буду помнить за 15 минут до каждой.")
+    await message.answer("📅 Публикация запланирована! Буду напоминать за 2 минуты до каждой.")
     await state.clear()
 
 # === Кнопки отмены ===
