@@ -143,7 +143,7 @@ async def handle_time(message: types.Message, state: FSMContext):
         "cancel_next": False
     }
 
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     start_datetime = datetime.combine(now.date(), pub_time) - timedelta(minutes=2)
     start_datetime = start_datetime.replace(tzinfo=timezone.utc)
     
