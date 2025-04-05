@@ -9,8 +9,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from datetime import datetime, timezone
+from datetime import datetime, time, timedelta, timezone
 from telethon import TelegramClient
+
+local_offset = timedelta(hours=3)
 now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
 load_dotenv()
 
@@ -144,7 +146,8 @@ async def handle_time(message: types.Message, state: FSMContext):
     }
 
     now = datetime.now(timezone.utc)
-    start_datetime = datetime.combine(now.date(), pub_time) - timedelta(minutes=2)
+    start_datetime = datetime.combine(datetime.now().date(), pub_time) - timedelta(minutes=2)
+    start_datetime = start_datetime - local_offset
     start_datetime = start_datetime.replace(tzinfo=timezone.utc)
     
     if start_datetime < now:
