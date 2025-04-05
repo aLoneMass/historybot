@@ -23,6 +23,7 @@ bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 scheduler = AsyncIOScheduler()
+scheduler.start()
 client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 user_schedules = {}
@@ -176,7 +177,7 @@ async def cancel_handler(callback: types.CallbackQuery):
 
 # === Точка входа ===
 async def main():
-    scheduler.start()
+    
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
