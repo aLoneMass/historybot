@@ -1,6 +1,6 @@
 import asyncio
 import os
-from datetime import datetime, timedelta, time as dtime
+#from datetime import datetime, timedelta, time as dtime
 
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, F, types
@@ -9,8 +9,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.date import DateTrigger
 from datetime import datetime, time, timedelta, timezone
 from telethon import TelegramClient
+
+
 
 local_offset = timedelta(hours=3)
 now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
@@ -156,14 +159,20 @@ async def handle_time(message: types.Message, state: FSMContext):
     print(f"[SCHEDULE] Задача будет запущена в {start_datetime}")
     print(f"[SCHEDULE] Публикация для user_id={user_id} в {pub_time}, запуск уведомления в {start_datetime}")
     scheduler.add_job(
-        send_notification,
-        trigger='interval',
-        days=data["interval_days"],
-        next_run_time=start_datetime,
+        # send_notification,
+        # trigger='interval',
+        # days=data["interval_days"],
+        # next_run_time=start_datetime,
+        # args=[user_id],
+        # id=str(user_id),
+        # replace_existing=True
+        func=send_notification,
+        trigger=DateTrigger(run_date=start_datetime),
         args=[user_id],
-        id=str(user_id),
+        id=f"notify_{user_id}_{start_datetime}",
         replace_existing=True
     )
+    
     print("[DEBUG] Текущие задачи:")
     for job in scheduler.get_jobs():
         print(job)
