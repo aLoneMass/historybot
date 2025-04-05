@@ -38,6 +38,7 @@ class UploadStates(StatesGroup):
 async def publish_story_delayed(user_id: int, delay: int):
     await asyncio.sleep(delay)
     data = user_schedules.get(user_id)
+    print(f"[DEBUG] func publish_story_delayed Напоминание для user_id: {user_id}")
     if not data or data.get("cancel_next"):
         data["cancel_next"] = False
         return
@@ -66,6 +67,7 @@ async def publish_story_delayed(user_id: int, delay: int):
 # === Функция отправки напоминания ===
 async def send_notification(user_id: int):
     data = user_schedules.get(user_id)
+    print(f"[DEBUG] func send_notification Напоминание для user_id: {user_id}")
     if not data:
         return
 
