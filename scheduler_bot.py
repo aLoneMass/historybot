@@ -184,7 +184,7 @@ async def cancel_handler(callback: types.CallbackQuery):
 
 # === Точка входа ===
 async def main():
-    print("[MAIN] Старт бота. Сейчас: {now}.")
+    print(f"[MAIN] Старт бота. Сейчас: {now}.")
     print("[DEBUG] Запланированные задачи:")
     print(scheduler.get_jobs())
     await dp.start_polling(bot)
