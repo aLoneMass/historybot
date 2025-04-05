@@ -130,6 +130,10 @@ async def handle_days(message: types.Message, state: FSMContext):
 
 @dp.message(UploadStates.waiting_for_time)
 async def handle_time(message: types.Message, state: FSMContext):
+    if not message.text or ":" not in message.text:
+        await message.answer("Неверный формат. Пиши HH:MM, например 14:30")
+        return
+
     try:
         h, m = map(int, message.text.strip().split(":"))
         pub_time = dtime(hour=h, minute=m)
@@ -172,7 +176,7 @@ async def handle_time(message: types.Message, state: FSMContext):
         id=f"notify_{user_id}_{start_datetime}",
         replace_existing=True
     )
-    
+
     print("[DEBUG] Текущие задачи:")
     for job in scheduler.get_jobs():
         print(job)
