@@ -130,15 +130,16 @@ async def handle_days(message: types.Message, state: FSMContext):
 
 @dp.message(UploadStates.waiting_for_time, F.text)
 async def handle_time(message: types.Message, state: FSMContext):
+    print(f"[HANDLE_TIME] Получено сообщение: {message.text!r}")
     if not message.text or ":" not in message.text:
-        await message.answer("Неверный формат. Пиши HH:MM, например 14:30")
+        await message.answer("Неверный формат. Пиши HH:MM, например 13:30")
         return
 
     try:
         h, m = map(int, message.text.strip().split(":"))
         pub_time = dtime(hour=h, minute=m)
-    except:
-        await message.answer("Неверный формат. Пиши HH:MM, например 14:30")
+    except Exception as e:
+        await message.answer(f"Неверный формат ({e}). Пиши HH:MM, например 14:30")
         return
 
     data = await state.get_data()
